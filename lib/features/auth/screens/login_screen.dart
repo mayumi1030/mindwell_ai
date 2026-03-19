@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'register_screen.dart';
+import '../../../core/services/auth_service.dart';
+import '../../home/screens/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -319,16 +321,59 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _handleEmailLogin() {
-    // TODO: wire up Firebase Auth in auth_service.dart
+  final AuthService _authService = AuthService();
+
+  void _handleEmailLogin() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      _showError('Please fill in all fields.');
+      return;
+    }
+
     setState(() => _isLoading = true);
-    Future.delayed(
-      const Duration(seconds: 2),
-      () => setState(() => _isLoading = false),
-    );
+
+    try {
+      await _authService.loginWithEmail(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      if (!mounted) return;
+      // Navigate to home and clear back stack
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        (route) => false,
+      );
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
-  void _handleGoogleLogin() {
-    // TODO: wire up Google Sign-In
+  void _handleGoogleLogin() async {
+    setState(() => _isLoading = true);
+    try {
+      final result = await _authService.signInWithGoogle();
+      if (result == null) return; // user cancelled
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        (route) => false,
+      );
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: const Color(0xFFE57373),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
   }
 }

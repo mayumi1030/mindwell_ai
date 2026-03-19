@@ -1,6 +1,7 @@
+import '../../../core/services/auth_service.dart';
+import '../../home/screens/home_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -379,16 +380,67 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  void _handleRegister() {
-    // TODO: wire up Firebase Auth in auth_service.dart
+  final AuthService _authService = AuthService();
+
+  void _handleRegister() async {
+    if (_nameController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _passwordController.text.isEmpty) {
+      _showError('Please fill in all fields.');
+      return;
+    }
+    if (!_agreedToPolicy) {
+      _showError('Please agree to the Privacy Policy.');
+      return;
+    }
+
     setState(() => _isLoading = true);
-    Future.delayed(
-      const Duration(seconds: 2),
-      () => setState(() => _isLoading = false),
-    );
+
+    try {
+      final result = await _authService.registerWithEmail(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      // Save display name
+      await result?.user?.updateDisplayName(_nameController.text.trim());
+
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        (route) => false,
+      );
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
-  void _handleGoogleRegister() {
-    // TODO: wire up Google Sign-In
+  void _handleGoogleRegister() async {
+    setState(() => _isLoading = true);
+    try {
+      final result = await _authService.signInWithGoogle();
+      if (result == null) return;
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        (route) => false,
+      );
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: const Color(0xFFE57373),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
   }
 }
