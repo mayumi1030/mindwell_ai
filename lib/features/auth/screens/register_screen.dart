@@ -1,7 +1,7 @@
 import '../../../core/services/auth_service.dart';
-import '../../home/screens/home_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'consent_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -406,7 +406,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(builder: (_) => const ConsentScreen()),
         (route) => false,
       );
     } catch (e) {
@@ -423,7 +423,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (result == null) return;
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(builder: (_) => const ConsentScreen()),
         (route) => false,
       );
     } catch (e) {
