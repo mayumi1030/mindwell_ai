@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "867917071065",
+    "project_id": "mindwell-ai-a7c7e",
+    "storage_bucket": "mindwell-ai-a7c7e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867917071065:android:0c871b5e5bd7547a79b4c8",
+        "android_client_info": {
+          "package_name": "com.example.mindwell_ai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgaEkIjEtSgw_PLaaCS8yYk11OcyZlF8s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
