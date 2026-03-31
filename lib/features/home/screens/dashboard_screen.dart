@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import '../../../core/services/firestore_service.dart';
 import '../../../models/mood_entry.dart';
+import '../../assessment/screens/assessment_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -34,14 +35,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> _loadEntries() async {
     final entries = await _firestoreService.getMoodEntries(_userId);
-    if (mounted)
+    if (mounted) {
       setState(() {
         _entries = entries;
         _isLoading = false;
       });
+    }
   }
 
-  // Calculate mood streak
   int get _streak {
     if (_entries.isEmpty) return 0;
     int streak = 0;
@@ -61,13 +62,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return streak;
   }
 
-  // Latest mood score
   int? get _latestScore => _entries.isNotEmpty ? _entries.first.score : null;
 
-  // Latest mood emoji
   String? get _latestEmoji => _entries.isNotEmpty ? _entries.first.emoji : null;
 
-  // Daily insight based on latest mood
   String get _dailyInsight {
     if (_latestScore == null) {
       return 'Welcome! Start by logging your mood today.';
@@ -84,7 +82,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return "It looks like you're having a tough time. Remember, you're not alone. Consider reaching out to someone you trust or visiting the Help tab.";
   }
 
-  // Last 7 entries for chart (oldest first)
   List<MoodEntry> get _chartEntries {
     final recent = _entries.take(7).toList();
     return recent.reversed.toList();
@@ -183,7 +180,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildStatsRow() {
     return Row(
       children: [
-        // Mood streak card
         Expanded(
           child: Container(
             padding: const EdgeInsets.all(18),
@@ -238,7 +234,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
         const SizedBox(width: 14),
 
-        // Latest mood card
         Expanded(
           child: Container(
             padding: const EdgeInsets.all(18),
@@ -433,18 +428,43 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ),
           const SizedBox(height: 12),
+
+          // ✅ New Journal Entry
           _buildActionTile(
             icon: Icons.add_circle_outline_rounded,
             iconColor: _primaryGreen,
             label: 'New Journal Entry',
             onTap: () {},
           ),
+
           const SizedBox(height: 10),
+
+          // ✅ PHQ-9 Test
           _buildActionTile(
             icon: Icons.trending_up_rounded,
             iconColor: const Color(0xFF5C6BC0),
             label: 'Take PHQ-9 Test',
-            onTap: () {},
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const AssessmentScreen(type: 'PHQ9'),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          // ✅ GAD-7 Test
+          _buildActionTile(
+            icon: Icons.psychology_outlined,
+            iconColor: const Color(0xFF2D9B6F),
+            label: 'Take GAD-7 Test',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const AssessmentScreen(type: 'GAD7'),
+              ),
+            ),
           ),
         ],
       ),
