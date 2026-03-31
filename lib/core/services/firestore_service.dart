@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/mood_entry.dart';
 import '../../models/journal_entry.dart';
+import '../../models/assessment_result.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -106,6 +107,50 @@ class FirestoreService {
         .map(
           (snapshot) => snapshot.docs
               .map((doc) => JournalEntry.fromMap(doc.id, doc.data()))
+              .toList(),
+        );
+  }
+  // ─── Assessment Results ───────────────────────────────────────
+
+  Future<void> saveAssessmentResult(AssessmentResult result) async {
+    await _db
+        .collection('users')
+        .doc(result.userId)
+        .collection('assessments')
+        .add(result.toMap());
+  }
+
+  Future<List<AssessmentResult>> getAssessmentResults(
+    String userId,
+    String type,
+  ) async {
+    final snapshot = await _db
+        .collection('users')
+        .doc(userId)
+        .collection('assessments')
+        .where('type', isEqualTo: type)
+        .orderBy('createdAt', descending: true)
+        .get();
+
+    return snapshot.docs
+        .map((doc) => AssessmentResult.fromMap(doc.id, doc.data()))
+        .toList();
+  }
+
+  Stream<List<AssessmentResult>> getAssessmentResultsStream(
+    String userId,
+    String type,
+  ) {
+    return _db
+        .collection('users')
+        .doc(userId)
+        .collection('assessments')
+        .where('type', isEqualTo: type)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => AssessmentResult.fromMap(doc.id, doc.data()))
               .toList(),
         );
   }
