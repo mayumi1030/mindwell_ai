@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/mood_entry.dart';
+import '../../models/journal_entry.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -70,5 +71,42 @@ class FirestoreService {
         .get();
 
     return snapshot.docs.isNotEmpty;
+  }
+
+  // ─── Journal Entries ──────────────────────────────────────────
+
+  Future<void> saveJournalEntry(JournalEntry entry) async {
+    await _db
+        .collection('users')
+        .doc(entry.userId)
+        .collection('journal_entries')
+        .add(entry.toMap());
+  }
+
+  Future<List<JournalEntry>> getJournalEntries(String userId) async {
+    final snapshot = await _db
+        .collection('users')
+        .doc(userId)
+        .collection('journal_entries')
+        .orderBy('createdAt', descending: true)
+        .get();
+
+    return snapshot.docs
+        .map((doc) => JournalEntry.fromMap(doc.id, doc.data()))
+        .toList();
+  }
+
+  Stream<List<JournalEntry>> getJournalEntriesStream(String userId) {
+    return _db
+        .collection('users')
+        .doc(userId)
+        .collection('journal_entries')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => JournalEntry.fromMap(doc.id, doc.data()))
+              .toList(),
+        );
   }
 }
