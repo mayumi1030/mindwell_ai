@@ -6,7 +6,9 @@ import '../../../models/mood_entry.dart';
 import '../../assessment/screens/assessment_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+  final Function(int) onNavigate;
+
+  const DashboardScreen({super.key, required this.onNavigate});
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -434,7 +436,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             icon: Icons.add_circle_outline_rounded,
             iconColor: _primaryGreen,
             label: 'New Journal Entry',
-            onTap: () {},
+            onTap: () => widget.onNavigate(2), // 2 = Journal tab index
           ),
 
           const SizedBox(height: 10),

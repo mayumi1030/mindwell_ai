@@ -20,13 +20,15 @@ class _HomeScreenState extends State<HomeScreen> {
   static const Color _textMuted = Color(0xFF9E9E9E);
   static const Color _background = Color(0xFFF5F4EF);
 
-  final List<Widget> _screens = const [
-    DashboardScreen(),
-    MoodTrackerScreen(),
-    JournalScreen(),
-    CalmScreen(),
-    CrisisScreen(),
-    SettingsScreen(),
+  List<Widget> get _screens => [
+    DashboardScreen(
+      onNavigate: (index) => setState(() => _currentIndex = index),
+    ),
+    const MoodTrackerScreen(),
+    const JournalScreen(),
+    const CalmScreen(),
+    const CrisisScreen(),
+    const SettingsScreen(),
   ];
 
   final List<_NavItem> _navItems = const [
