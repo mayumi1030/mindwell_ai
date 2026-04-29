@@ -154,4 +154,40 @@ class FirestoreService {
               .toList(),
         );
   }
+
+  // Add this method to FirestoreService class
+  Future<void> deleteAllUserData(String userId) async {
+    // Delete mood entries
+    final moodSnapshot = await _db
+        .collection('users')
+        .doc(userId)
+        .collection('mood_entries')
+        .get();
+    for (final doc in moodSnapshot.docs) {
+      await doc.reference.delete();
+    }
+
+    // Delete journal entries
+    final journalSnapshot = await _db
+        .collection('users')
+        .doc(userId)
+        .collection('journal_entries')
+        .get();
+    for (final doc in journalSnapshot.docs) {
+      await doc.reference.delete();
+    }
+
+    // Delete assessments
+    final assessmentSnapshot = await _db
+        .collection('users')
+        .doc(userId)
+        .collection('assessments')
+        .get();
+    for (final doc in assessmentSnapshot.docs) {
+      await doc.reference.delete();
+    }
+
+    // Delete user document
+    await _db.collection('users').doc(userId).delete();
+  }
 }
