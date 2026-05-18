@@ -16,24 +16,21 @@ class _MoodTrackerScreenState extends State<MoodTrackerScreen> {
   bool _isSaving = false;
   bool _alreadyLoggedToday = false;
 
-  static const Color _background = Color(0xFFF5F4EF);
-  static const Color _primaryGreen = Color(0xFF2D9B6F);
-  static const Color _textDark = Color(0xFF1A1A1A);
-  static const Color _textMuted = Color(0xFF6B6B6B);
-  static const Color _cardBg = Color(0xFFFFFFFF);
-
-  // 10 emojis matching your UI design
   final List<String> _emojis = [
-    '🤬',
-    '😔',
-    '😟',
-    '😐',
-    '🙂',
-    '😊',
-    '🤩',
-    '✨',
-    '🌈',
-    '😇',
+    '🤬', '😔', '😟', '😐', '🙂', '😊', '🤩', '✨', '🌈', '😇',
+  ];
+
+  final List<Color> _moodColors = [
+    const Color(0xFFFF6B8A),
+    const Color(0xFFFF8C69),
+    const Color(0xFFFFB347),
+    const Color(0xFFFFD700),
+    const Color(0xFFB8E066),
+    const Color(0xFF7EEFD0),
+    const Color(0xFF4ADEAA),
+    const Color(0xFF48CDD3),
+    const Color(0xFFAEC9FF),
+    const Color(0xFFF7CBFD),
   ];
 
   String get _userId => FirebaseAuth.instance.currentUser?.uid ?? '';
@@ -52,7 +49,6 @@ class _MoodTrackerScreenState extends State<MoodTrackerScreen> {
   Future<void> _saveMood() async {
     if (_selectedScore == null) return;
     setState(() => _isSaving = true);
-
     try {
       final entry = MoodEntry(
         id: '',
@@ -70,23 +66,21 @@ class _MoodTrackerScreenState extends State<MoodTrackerScreen> {
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Mood saved successfully!'),
-          backgroundColor: _primaryGreen,
+          content: const Text('Mood saved! 🎉'),
+          backgroundColor: const Color(0xFF5936B4),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+              borderRadius: BorderRadius.circular(14)),
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error saving mood: $e'),
-          backgroundColor: Colors.redAccent,
+          content: Text('Error: $e'),
+          backgroundColor: const Color(0xFFFF6B8A),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+              borderRadius: BorderRadius.circular(14)),
         ),
       );
     } finally {
@@ -96,15 +90,20 @@ class _MoodTrackerScreenState extends State<MoodTrackerScreen> {
 
   Widget _buildEmojiPicker() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        color: _cardBg,
-        borderRadius: BorderRadius.circular(20),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0x33FFFFFF), Color(0x0DFFFFFF)],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white.withOpacity(0.12)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.25),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -112,131 +111,118 @@ class _MoodTrackerScreenState extends State<MoodTrackerScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'HOW ARE YOU RIGHT NOW?',
+            'SELECT YOUR MOOD',
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF9E9E9E),
+              color: Color(0xFFB8B0E8),
               letterSpacing: 1.2,
             ),
           ),
-          const SizedBox(height: 16),
-
-          // 2 rows of 5 emojis
-          ...List.generate(2, (rowIndex) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: List.generate(5, (colIndex) {
-                  final score = rowIndex * 5 + colIndex + 1;
-                  final isSelected = _selectedScore == score;
-                  return GestureDetector(
-                    onTap: _alreadyLoggedToday
-                        ? null
-                        : () => setState(
-                            () => _selectedScore == score
-                                ? _selectedScore = null
-                                : _selectedScore = score,
-                          ),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? _primaryGreen.withOpacity(0.12)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: isSelected
-                              ? _primaryGreen
-                              : Colors.transparent,
-                          width: 2,
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            _emojis[score - 1],
-                            style: TextStyle(fontSize: isSelected ? 36 : 30),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '$score',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: isSelected
-                                  ? FontWeight.w700
-                                  : FontWeight.w400,
-                              color: isSelected ? _primaryGreen : _textMuted,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }),
-              ),
-            );
-          }),
-
-          if (!_alreadyLoggedToday && _selectedScore != null) ...[
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: _isSaving ? null : _saveMood,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _primaryGreen,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  elevation: 0,
-                ),
-                child: _isSaving
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : const Text(
-                        'Save Mood',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-              ),
+          const SizedBox(height: 18),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 5,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 1,
             ),
-          ],
-
-          if (_alreadyLoggedToday) ...[
-            const SizedBox(height: 16),
+            itemCount: _emojis.length,
+            itemBuilder: (context, index) {
+              final score = index + 1;
+              final isSelected = _selectedScore == score;
+              final moodColor = _moodColors[index];
+              return GestureDetector(
+                onTap: () => setState(() => _selectedScore = score),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeOut,
+                  decoration: BoxDecoration(
+                    gradient: isSelected
+                        ? LinearGradient(
+                            colors: [
+                              moodColor.withOpacity(0.4),
+                              moodColor.withOpacity(0.15),
+                            ],
+                          )
+                        : null,
+                    color: isSelected ? null : Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: isSelected
+                          ? moodColor.withOpacity(0.8)
+                          : Colors.white.withOpacity(0.1),
+                      width: isSelected ? 1.5 : 1.0,
+                    ),
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: moodColor.withOpacity(0.4),
+                              blurRadius: 12,
+                              spreadRadius: 1,
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _emojis[index],
+                        style: TextStyle(
+                          fontSize: isSelected ? 26 : 22,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '$score',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: isSelected
+                              ? moodColor
+                              : Colors.white.withOpacity(0.4),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          if (_selectedScore != null) ...[
+            const SizedBox(height: 18),
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: _primaryGreen.withOpacity(0.08),
-                borderRadius: BorderRadius.circular(12),
+                gradient: LinearGradient(
+                  colors: [
+                    _moodColors[_selectedScore! - 1].withOpacity(0.15),
+                    _moodColors[_selectedScore! - 1].withOpacity(0.05),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: _moodColors[_selectedScore! - 1].withOpacity(0.3),
+                ),
               ),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.check_circle_outline_rounded,
-                    color: _primaryGreen,
-                    size: 18,
+                  Text(
+                    _emojis[_selectedScore! - 1],
+                    style: const TextStyle(fontSize: 22),
                   ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'Mood logged for today. See you tomorrow!',
+                  const SizedBox(width: 10),
+                  Text(
+                    'Mood score: ${_selectedScore}/10',
                     style: TextStyle(
-                      fontSize: 13,
-                      color: Color(0xFF2D9B6F),
-                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: _moodColors[_selectedScore! - 1],
                     ),
                   ),
                 ],
@@ -248,209 +234,156 @@ class _MoodTrackerScreenState extends State<MoodTrackerScreen> {
     );
   }
 
-  Widget _buildHistoryList() {
-    return StreamBuilder<List<MoodEntry>>(
-      stream: _firestoreService.getMoodEntriesStream(_userId),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(color: Color(0xFF2D9B6F)),
-          );
-        }
-
-        final entries = snapshot.data ?? [];
-        if (entries.isEmpty) {
-          return Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: _cardBg,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Center(
-              child: Text(
-                'No mood entries yet.\nStart tracking your mood above!',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
-              ),
-            ),
-          );
-        }
-
-        return Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: _cardBg,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'HISTORY',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF9E9E9E),
-                  letterSpacing: 1.2,
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF1F1D47), Color(0xFF0E0C2A), Color(0xFF16103A)],
+          stops: [0.0, 0.5, 1.0],
+        ),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            bottom: 80,
+            right: -80,
+            child: Container(
+              width: 220,
+              height: 220,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    const Color(0xFF3658B1).withOpacity(0.2),
+                    Colors.transparent,
+                  ],
                 ),
               ),
-              const SizedBox(height: 12),
-              ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: entries.length,
-                separatorBuilder: (_, __) =>
-                    Divider(color: Colors.grey.shade100, height: 1),
-                itemBuilder: (context, index) {
-                  final entry = entries[index];
-                  final date = entry.createdAt;
-                  final dateStr =
-                      '${_monthName(date.month)} ${date.day.toString().padLeft(2, '0')}';
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Row(
-                      children: [
-                        Text(entry.emoji, style: const TextStyle(fontSize: 28)),
-                        const SizedBox(width: 14),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${entry.score}/10',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF1A1A1A),
+            ),
+          ),
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 22),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 32),
+
+                  ShaderMask(
+                    shaderCallback: (bounds) => const LinearGradient(
+                      colors: [Color(0xFFE0D9FF), Color(0xFFF7CBFD)],
+                    ).createShader(bounds),
+                    child: const Text(
+                      'Mood Tracker',
+                      style: TextStyle(
+                        fontFamily: 'Georgia',
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'How are you feeling right now?',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFFB8B0E8),
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  if (_alreadyLoggedToday)
+                    Container(
+                      padding: const EdgeInsets.all(18),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF4ADEAA), Color(0xFF3658B1)],
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF4ADEAA).withOpacity(0.3),
+                            blurRadius: 20,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: const Row(
+                        children: [
+                          Icon(Icons.check_circle_rounded,
+                              color: Colors.white, size: 22),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              "You've already logged your mood today. Great job! 🎉",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
                               ),
                             ),
-                            Text(
-                              dateStr.toUpperCase(),
-                              style: const TextStyle(
-                                fontSize: 11,
-                                color: Color(0xFF9E9E9E),
-                                letterSpacing: 0.8,
-                              ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    _buildEmojiPicker(),
+
+                  if (!_alreadyLoggedToday && _selectedScore != null) ...[
+                    const SizedBox(height: 20),
+                    GestureDetector(
+                      onTap: _isSaving ? null : _saveMood,
+                      child: Container(
+                        width: double.infinity,
+                        height: 54,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF5936B4), Color(0xFFC427FB)],
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFFC427FB).withOpacity(0.4),
+                              blurRadius: 20,
+                              offset: const Offset(0, 6),
                             ),
                           ],
                         ),
-                        const Spacer(),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _scoreColor(entry.score).withOpacity(0.12),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            _scoreLabel(entry.score),
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: _scoreColor(entry.score),
-                            ),
-                          ),
+                        child: Center(
+                          child: _isSaving
+                              ? const SizedBox(
+                                  width: 22,
+                                  height: 22,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text(
+                                  'Save Mood',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                    letterSpacing: 0.4,
+                                  ),
+                                ),
                         ),
-                      ],
+                      ),
                     ),
-                  );
-                },
+                  ],
+
+                  const SizedBox(height: 28),
+                ],
               ),
-            ],
+            ),
           ),
-        );
-      },
-    );
-  }
-
-  Color _scoreColor(int score) {
-    if (score <= 3) return const Color(0xFFE57373);
-    if (score <= 5) return const Color(0xFFFFB347);
-    if (score <= 7) return const Color(0xFF4CAF82);
-    return const Color(0xFF2D9B6F);
-  }
-
-  String _scoreLabel(int score) {
-    if (score <= 2) return 'Very Low';
-    if (score <= 4) return 'Low';
-    if (score <= 6) return 'Moderate';
-    if (score <= 8) return 'Good';
-    return 'Excellent';
-  }
-
-  String _monthName(int month) {
-    const months = [
-      'JAN',
-      'FEB',
-      'MAR',
-      'APR',
-      'MAY',
-      'JUN',
-      'JUL',
-      'AUG',
-      'SEP',
-      'OCT',
-      'NOV',
-      'DEC',
-    ];
-    return months[month - 1];
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 32),
-
-              // Header
-              const Text(
-                'Mood Tracker',
-                style: TextStyle(
-                  fontFamily: 'Georgia',
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                  color: _textDark,
-                ),
-              ),
-              const SizedBox(height: 4),
-              const Text(
-                'Track your emotional journey',
-                style: TextStyle(
-                  fontFamily: 'Georgia',
-                  fontSize: 14,
-                  fontStyle: FontStyle.italic,
-                  color: _textMuted,
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // Emoji picker card
-              _buildEmojiPicker(),
-
-              const SizedBox(height: 20),
-
-              // History list
-              _buildHistoryList(),
-
-              const SizedBox(height: 24),
-            ],
-          ),
-        ),
+        ],
       ),
     );
   }

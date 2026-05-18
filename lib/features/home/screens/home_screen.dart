@@ -16,10 +16,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
-  static const Color _primaryGreen = Color(0xFF2D9B6F);
-  static const Color _textMuted = Color(0xFF9E9E9E);
-  static const Color _background = Color(0xFFF5F4EF);
-
   List<Widget> get _screens => [
     DashboardScreen(
       onNavigate: (index) => setState(() => _currentIndex = index),
@@ -43,22 +39,36 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _background,
       body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF1A1740), Color(0xFF16103A)],
+          ),
+          border: Border(
+            top: BorderSide(
+              color: Colors.white.withOpacity(0.1),
+              width: 0.8,
+            ),
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 16,
-              offset: const Offset(0, -4),
+              color: Colors.black.withOpacity(0.4),
+              blurRadius: 24,
+              offset: const Offset(0, -6),
+            ),
+            BoxShadow(
+              color: const Color(0xFF5936B4).withOpacity(0.15),
+              blurRadius: 40,
+              offset: const Offset(0, -10),
             ),
           ],
         ),
         child: SafeArea(
           child: SizedBox(
-            height: 62,
+            height: 64,
             child: Row(
               children: List.generate(_navItems.length, (index) {
                 final item = _navItems[index];
@@ -67,27 +77,58 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: GestureDetector(
                     onTap: () => setState(() => _currentIndex = index),
                     behavior: HitTestBehavior.opaque,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          item.icon,
-                          size: 22,
-                          color: isActive ? _primaryGreen : _textMuted,
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          item.label,
-                          style: TextStyle(
-                            fontSize: 9,
-                            fontWeight: isActive
-                                ? FontWeight.w700
-                                : FontWeight.w400,
-                            color: isActive ? _primaryGreen : _textMuted,
-                            letterSpacing: 0.5,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeOut,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (isActive)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 6),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFF5936B4),
+                                    Color(0xFFC427FB),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFFC427FB)
+                                        .withOpacity(0.35),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Icon(item.icon,
+                                  size: 20, color: Colors.white),
+                            )
+                          else
+                            Icon(
+                              item.icon,
+                              size: 22,
+                              color: Colors.white.withOpacity(0.35),
+                            ),
+                          const SizedBox(height: 3),
+                          Text(
+                            item.label,
+                            style: TextStyle(
+                              fontSize: 8,
+                              fontWeight: isActive
+                                  ? FontWeight.w700
+                                  : FontWeight.w400,
+                              color: isActive
+                                  ? const Color(0xFFE0D9FF)
+                                  : Colors.white.withOpacity(0.35),
+                              letterSpacing: 0.5,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 );

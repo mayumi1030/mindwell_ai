@@ -4,12 +4,6 @@ import 'package:url_launcher/url_launcher.dart';
 class CrisisScreen extends StatelessWidget {
   const CrisisScreen({super.key});
 
-  static const Color _background = Color(0xFFF5F4EF);
-  static const Color _primaryGreen = Color(0xFF2D9B6F);
-  static const Color _textDark = Color(0xFF1A1A1A);
-  static const Color _textMuted = Color(0xFF6B6B6B);
-  static const Color _cardBg = Color(0xFFFFFFFF);
-
   final List<Map<String, String>> _helplines = const [
     {
       'name': 'National Institute of Mental Health (NIMH)',
@@ -44,7 +38,7 @@ class CrisisScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _background,
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -60,7 +54,7 @@ class CrisisScreen extends StatelessWidget {
                   fontFamily: 'Georgia',
                   fontSize: 28,
                   fontWeight: FontWeight.w700,
-                  color: _textDark,
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(height: 4),
@@ -70,7 +64,7 @@ class CrisisScreen extends StatelessWidget {
                   fontFamily: 'Georgia',
                   fontSize: 14,
                   fontStyle: FontStyle.italic,
-                  color: _textMuted,
+                  color: const Color(0xFFB8B0E8),
                 ),
               ),
 
@@ -94,7 +88,7 @@ class CrisisScreen extends StatelessWidget {
                       height: 40,
                       decoration: BoxDecoration(
                         color: const Color(0xFFFFE0E0),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
                       ),
                       child: const Icon(
                         Icons.warning_amber_rounded,
@@ -152,11 +146,11 @@ class CrisisScreen extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    color: _cardBg,
+                    color: Colors.transparent,
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withOpacity(0.25),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),
@@ -173,7 +167,7 @@ class CrisisScreen extends StatelessWidget {
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
-                                color: _textDark,
+                                color: Colors.white,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -181,7 +175,7 @@ class CrisisScreen extends StatelessWidget {
                               helpline['description']!,
                               style: const TextStyle(
                                 fontSize: 12,
-                                color: _textMuted,
+                                color: const Color(0xFFB8B0E8),
                                 height: 1.4,
                               ),
                             ),
@@ -191,7 +185,7 @@ class CrisisScreen extends StatelessWidget {
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
-                                color: _primaryGreen,
+                                color: const Color(0xFFC427FB),
                               ),
                             ),
                           ],
@@ -204,8 +198,8 @@ class CrisisScreen extends StatelessWidget {
                           width: 52,
                           height: 52,
                           decoration: BoxDecoration(
-                            color: _primaryGreen,
-                            borderRadius: BorderRadius.circular(14),
+                            color: const Color(0xFFC427FB),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                           child: const Icon(
                             Icons.phone_rounded,
@@ -225,7 +219,7 @@ class CrisisScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE8F5F0),
+                  color: const Color(0x15FFFFFF),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: const Row(

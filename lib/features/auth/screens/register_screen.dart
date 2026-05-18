@@ -3,6 +3,13 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'consent_screen.dart';
 
+// Color constants
+const Color _primaryGreen = Color(0xFF2D9B6F);
+const Color _logoBackground = Color(0xFFCCEFE2);
+const Color _textDark = Color(0xFF1A1A1A);
+const Color _textMuted = Color(0xFF6B6B6B);
+const Color _inputFill = Color(0x1AFFFFFF);
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -17,14 +24,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _obscurePassword = true;
   bool _agreedToPolicy = false;
   bool _isLoading = false;
-
-  static const Color _background = Color(0xFFF5F4EF);
-  static const Color _primaryGreen = Color(0xFF2D9B6F);
-  static const Color _logoBackground = Color(0xFFCCEFE2);
-  static const Color _textDark = Color(0xFF1A1A1A);
-  static const Color _textMuted = Color(0xFF6B6B6B);
-  static const Color _inputFill = Color(0xFFEEEDE8);
-  static const Color _cardBg = Color(0xFFFFFFFF);
 
   @override
   void dispose() {
@@ -42,7 +41,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         style: const TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w600,
-          color: _textMuted,
+          color: const Color(0xFFB8B0E8),
           letterSpacing: 1.2,
         ),
       ),
@@ -67,8 +66,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         filled: true,
         fillColor: _inputFill,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: Colors.white.withOpacity(0.12)),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
@@ -82,7 +81,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _background,
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -100,7 +99,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 child: const Icon(
                   Icons.favorite_border_rounded,
-                  color: _primaryGreen,
+                  color: const Color(0xFFC427FB),
                   size: 40,
                 ),
               ),
@@ -114,7 +113,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   fontFamily: 'Georgia',
                   fontSize: 32,
                   fontWeight: FontWeight.w700,
-                  color: _textDark,
+                  color: Colors.white,
                 ),
               ),
 
@@ -127,7 +126,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   fontFamily: 'Georgia',
                   fontSize: 14,
                   fontStyle: FontStyle.italic,
-                  color: _textMuted,
+                  color: const Color(0xFFB8B0E8),
                 ),
               ),
 
@@ -137,11 +136,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: _cardBg,
+                  color: Colors.transparent,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.06),
+                      color: Colors.black.withOpacity(0.25),
                       blurRadius: 20,
                       offset: const Offset(0, 4),
                     ),
@@ -157,7 +156,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         fontFamily: 'Georgia',
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
-                        color: _textDark,
+                        color: Colors.white,
                       ),
                     ),
 
@@ -193,7 +192,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           _obscurePassword
                               ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined,
-                          color: _textMuted,
+                          color: const Color(0xFFB8B0E8),
                           size: 20,
                         ),
                         onPressed: () => setState(
@@ -213,7 +212,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           height: 22,
                           child: Checkbox(
                             value: _agreedToPolicy,
-                            activeColor: _primaryGreen,
+                            activeColor: const Color(0xFFC427FB),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(4),
                             ),
@@ -227,7 +226,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             text: TextSpan(
                               style: const TextStyle(
                                 fontSize: 13,
-                                color: _textMuted,
+                                color: const Color(0xFFB8B0E8),
                                 height: 1.5,
                               ),
                               children: [
@@ -235,7 +234,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 TextSpan(
                                   text: 'Privacy Policy',
                                   style: const TextStyle(
-                                    color: _primaryGreen,
+                                    color: const Color(0xFFC427FB),
                                     fontWeight: FontWeight.w600,
                                   ),
                                   recognizer: TapGestureRecognizer()
@@ -265,13 +264,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ? null
                             : _handleRegister,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: _primaryGreen,
+                          backgroundColor: const Color(0xFF5936B4),
                           disabledBackgroundColor: _primaryGreen.withOpacity(
                             0.4,
                           ),
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                           elevation: 0,
                         ),
@@ -299,19 +298,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     // OR divider
                     Row(
                       children: [
-                        Expanded(child: Divider(color: Colors.grey.shade300)),
+                        Expanded(
+                          child: Divider(
+                            color: Colors.white.withOpacity(0.1),
+                          ),
+                        ),
                         const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 12),
                           child: Text(
                             'OR CONTINUE WITH',
                             style: TextStyle(
                               fontSize: 11,
-                              color: _textMuted,
+                              color: const Color(0xFFB8B0E8),
                               letterSpacing: 1.0,
                             ),
                           ),
                         ),
-                        Expanded(child: Divider(color: Colors.grey.shade300)),
+                        Expanded(
+                          child: Divider(
+                            color: Colors.white.withOpacity(0.1),
+                          ),
+                        ),
                       ],
                     ),
 
@@ -333,13 +340,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
-                            color: _textDark,
+                            color: Colors.white,
                           ),
                         ),
                         style: OutlinedButton.styleFrom(
                           side: BorderSide(color: Colors.grey.shade300),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                         ),
                       ),
@@ -353,14 +360,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       children: [
                         const Text(
                           'Already have an account? ',
-                          style: TextStyle(color: _textMuted, fontSize: 14),
+                          style: TextStyle(
+                            color: const Color(0xFFB8B0E8),
+                            fontSize: 14,
+                          ),
                         ),
                         GestureDetector(
                           onTap: () => Navigator.pop(context),
                           child: const Text(
                             'Log In',
                             style: TextStyle(
-                              color: _primaryGreen,
+                              color: const Color(0xFFC427FB),
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),

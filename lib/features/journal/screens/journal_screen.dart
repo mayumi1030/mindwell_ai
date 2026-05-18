@@ -17,12 +17,6 @@ class _JournalScreenState extends State<JournalScreen> {
   final TextEditingController _entryController = TextEditingController();
   bool _isSaving = false;
 
-  static const Color _background = Color(0xFFF5F4EF);
-  static const Color _primaryGreen = Color(0xFF2D9B6F);
-  static const Color _textDark = Color(0xFF1A1A1A);
-  static const Color _textMuted = Color(0xFF6B6B6B);
-  static const Color _cardBg = Color(0xFFFFFFFF);
-
   String get _userId => FirebaseAuth.instance.currentUser?.uid ?? '';
 
   @override
@@ -34,13 +28,9 @@ class _JournalScreenState extends State<JournalScreen> {
   Future<void> _saveEntry() async {
     final text = _entryController.text.trim();
     if (text.isEmpty) return;
-
     setState(() => _isSaving = true);
-
     try {
-      // Analyze sentiment
       final sentiment = await _sentimentService.analyze(text);
-
       final entry = JournalEntry(
         id: '',
         userId: _userId,
@@ -51,10 +41,8 @@ class _JournalScreenState extends State<JournalScreen> {
         keywords: sentiment.keywords,
         createdAt: DateTime.now(),
       );
-
       await _firestoreService.saveJournalEntry(entry);
       _entryController.clear();
-
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -65,23 +53,21 @@ class _JournalScreenState extends State<JournalScreen> {
               Text('Entry saved — ${sentiment.label}'),
             ],
           ),
-          backgroundColor: _primaryGreen,
+          backgroundColor: const Color(0xFF5936B4),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+              borderRadius: BorderRadius.circular(14)),
         ),
       );
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error saving entry: $e'),
-          backgroundColor: Colors.redAccent,
+          content: Text('Error: $e'),
+          backgroundColor: const Color(0xFFFF6B8A),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+              borderRadius: BorderRadius.circular(14)),
         ),
       );
     } finally {
@@ -92,25 +78,44 @@ class _JournalScreenState extends State<JournalScreen> {
   Color _sentimentColor(String label) {
     switch (label) {
       case 'POSITIVE':
-        return const Color(0xFF2D9B6F);
+        return const Color(0xFF4ADEAA);
       case 'NEGATIVE':
-        return const Color(0xFFE57373);
+        return const Color(0xFFFF6B8A);
       default:
         return const Color(0xFFFFB347);
     }
   }
 
+  LinearGradient _sentimentGradient(String label) {
+    switch (label) {
+      case 'POSITIVE':
+        return const LinearGradient(
+            colors: [Color(0xFF4ADEAA), Color(0xFF3658B1)]);
+      case 'NEGATIVE':
+        return const LinearGradient(
+            colors: [Color(0xFFFF6B8A), Color(0xFFC427FB)]);
+      default:
+        return const LinearGradient(
+            colors: [Color(0xFFFFB347), Color(0xFF5936B4)]);
+    }
+  }
+
   Widget _buildNewEntryCard() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        color: _cardBg,
-        borderRadius: BorderRadius.circular(20),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0x33FFFFFF), Color(0x0DFFFFFF)],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white.withOpacity(0.12)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.25),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -122,61 +127,79 @@ class _JournalScreenState extends State<JournalScreen> {
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF9E9E9E),
+              color: Color(0xFFB8B0E8),
               letterSpacing: 1.2,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           TextField(
             controller: _entryController,
             maxLines: 6,
-            style: const TextStyle(fontSize: 15, color: _textDark, height: 1.6),
+            style: const TextStyle(
+                fontSize: 15, color: Colors.white, height: 1.6),
             decoration: InputDecoration(
-              hintText: "What's on your mind? Your entries are encrypted.",
+              hintText:
+                  "What's on your mind? Your entries are private.",
               hintStyle: const TextStyle(
-                color: Color(0xFFBBBBBB),
+                color: Color(0xFF6B6494),
                 fontSize: 14,
               ),
               filled: true,
-              fillColor: const Color(0xFFF5F4EF),
+              fillColor: Colors.white.withOpacity(0.05),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide.none,
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(
+                    color: Colors.white.withOpacity(0.12)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(
+                    color: Colors.white.withOpacity(0.12)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(
+                    color: Color(0xFFC427FB), width: 1.5),
               ),
               contentPadding: const EdgeInsets.all(16),
             ),
           ),
           const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: _isSaving ? null : _saveEntry,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _primaryGreen,
-                disabledBackgroundColor: _primaryGreen.withOpacity(0.4),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+          GestureDetector(
+            onTap: _isSaving ? null : _saveEntry,
+            child: Container(
+              width: double.infinity,
+              height: 52,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF5936B4), Color(0xFFC427FB)],
                 ),
-                elevation: 0,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFC427FB).withOpacity(0.4),
+                    blurRadius: 20,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
-              child: _isSaving
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
+              child: Center(
+                child: _isSaving
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                            color: Colors.white, strokeWidth: 2),
+                      )
+                    : const Text(
+                        'Save Entry',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
                       ),
-                    )
-                  : const Text(
-                      'Save Entry',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+              ),
             ),
           ),
         ],
@@ -190,7 +213,8 @@ class _JournalScreenState extends State<JournalScreen> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
-            child: CircularProgressIndicator(color: Color(0xFF2D9B6F)),
+            child: CircularProgressIndicator(
+                color: Color(0xFFC427FB), strokeWidth: 2),
           );
         }
 
@@ -200,14 +224,34 @@ class _JournalScreenState extends State<JournalScreen> {
           return Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: _cardBg,
-              borderRadius: BorderRadius.circular(20),
+              gradient: const LinearGradient(
+                colors: [Color(0x33FFFFFF), Color(0x0DFFFFFF)],
+              ),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                  color: Colors.white.withOpacity(0.12)),
             ),
             child: const Center(
-              child: Text(
-                'No journal entries yet.\nWrite your first entry above!',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
+              child: Column(
+                children: [
+                  Text('📓', style: TextStyle(fontSize: 36)),
+                  SizedBox(height: 12),
+                  Text(
+                    'No entries yet',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 6),
+                  Text(
+                    'Start writing your first journal entry above.',
+                    style: TextStyle(
+                        fontSize: 13, color: Color(0xFFB8B0E8)),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             ),
           );
@@ -221,7 +265,7 @@ class _JournalScreenState extends State<JournalScreen> {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF9E9E9E),
+                color: Color(0xFFB8B0E8),
                 letterSpacing: 1.2,
               ),
             ),
@@ -235,108 +279,82 @@ class _JournalScreenState extends State<JournalScreen> {
 
   Widget _buildEntryCard(JournalEntry entry) {
     final date = entry.createdAt;
-    final dateStr = '${_monthName(date.month)} ${date.day}, ${date.year}';
-    final sentimentColor = _sentimentColor(entry.sentimentLabel);
-
+    final sentColor = _sentimentColor(entry.sentimentLabel);
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: _cardBg,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        gradient: const LinearGradient(
+          colors: [Color(0x33FFFFFF), Color(0x0DFFFFFF)],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header row
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                dateStr,
+                '${_monthName(date.month)} ${date.day}, ${date.year}',
                 style: const TextStyle(
                   fontSize: 12,
-                  color: Color(0xFF9E9E9E),
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFFB8B0E8),
                 ),
               ),
-              const Spacer(),
-              // Sentiment badge
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
+                    horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: sentimentColor.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(20),
+                  gradient: _sentimentGradient(entry.sentimentLabel),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      entry.sentimentEmoji,
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      entry.sentimentLabel,
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: sentimentColor,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  '${entry.sentimentEmoji} ${entry.sentimentLabel}',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ],
           ),
-
           const SizedBox(height: 10),
-
-          // Entry preview
           Text(
             entry.content.length > 120
                 ? '${entry.content.substring(0, 120)}...'
                 : entry.content,
-            style: const TextStyle(fontSize: 14, color: _textDark, height: 1.5),
+            style: const TextStyle(
+                fontSize: 14, color: Color(0xFFD4CCFF), height: 1.5),
           ),
-
-          // Keywords
           if (entry.keywords.isNotEmpty) ...[
             const SizedBox(height: 10),
             Wrap(
               spacing: 6,
               runSpacing: 6,
               children: entry.keywords
-                  .map(
-                    (kw) => Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 3,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF0EFFE),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        kw,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: Color(0xFF534AB7),
-                          fontWeight: FontWeight.w500,
+                  .map((kw) => Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF5936B4).withOpacity(0.25),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: const Color(0xFF5936B4).withOpacity(0.4),
+                          ),
                         ),
-                      ),
-                    ),
-                  )
+                        child: Text(
+                          kw,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Color(0xFFE0D9FF),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ))
                   .toList(),
             ),
           ],
@@ -347,57 +365,54 @@ class _JournalScreenState extends State<JournalScreen> {
 
   String _monthName(int month) {
     const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];
     return months[month - 1];
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _background,
-      body: SafeArea(
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF1F1D47), Color(0xFF0E0C2A), Color(0xFF16103A)],
+          stops: [0.0, 0.5, 1.0],
+        ),
+      ),
+      child: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 22),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 32),
-              const Text(
-                'Journal',
-                style: TextStyle(
-                  fontFamily: 'Georgia',
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                  color: _textDark,
+              ShaderMask(
+                shaderCallback: (bounds) => const LinearGradient(
+                  colors: [Color(0xFFE0D9FF), Color(0xFFF7CBFD)],
+                ).createShader(bounds),
+                child: const Text(
+                  'Journal',
+                  style: TextStyle(
+                    fontFamily: 'Georgia',
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               const SizedBox(height: 4),
               const Text(
                 'Safe space for your thoughts',
-                style: TextStyle(
-                  fontFamily: 'Georgia',
-                  fontSize: 14,
-                  fontStyle: FontStyle.italic,
-                  color: _textMuted,
-                ),
+                style: TextStyle(fontSize: 14, color: Color(0xFFB8B0E8)),
               ),
               const SizedBox(height: 24),
               _buildNewEntryCard(),
               const SizedBox(height: 24),
               _buildRecentEntries(),
-              const SizedBox(height: 24),
+              const SizedBox(height: 28),
             ],
           ),
         ),

@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
+// Color constant
+const Color _textMuted = Color(0xFF6B6B6B);
+
 class BreathingScreen extends StatefulWidget {
   const BreathingScreen({super.key});
 
@@ -18,11 +21,6 @@ class _BreathingScreenState extends State<BreathingScreen>
   int _phase = 0; // 0=inhale, 1=hold, 2=exhale
   int _cycleCount = 0;
   bool _isRunning = false;
-
-  static const Color _background = Color(0xFFF5F4EF);
-  static const Color _primaryGreen = Color(0xFF2D9B6F);
-  static const Color _textDark = Color(0xFF1A1A1A);
-  static const Color _textMuted = Color(0xFF6B6B6B);
 
   final List<Map<String, dynamic>> _phases = [
     {'label': 'Inhale', 'seconds': 4, 'color': Color(0xFF2D9B6F)},
@@ -110,7 +108,7 @@ class _BreathingScreenState extends State<BreathingScreen>
     final Color phaseColor = currentPhase['color'];
 
     return Scaffold(
-      backgroundColor: _background,
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: Column(
           children: [
@@ -129,7 +127,7 @@ class _BreathingScreenState extends State<BreathingScreen>
                       fontFamily: 'Georgia',
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
-                      color: _textDark,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -145,7 +143,7 @@ class _BreathingScreenState extends State<BreathingScreen>
                     'Cycle $_cycleCount',
                     style: const TextStyle(
                       fontSize: 14,
-                      color: _textMuted,
+                      color: const Color(0xFFB8B0E8),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -259,7 +257,7 @@ class _BreathingScreenState extends State<BreathingScreen>
                           height: 52,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.grey.shade100,
+                            color: Colors.white.withOpacity(0.06),
                           ),
                           child: const Icon(
                             Icons.refresh_rounded,
@@ -275,7 +273,7 @@ class _BreathingScreenState extends State<BreathingScreen>
                           height: 80,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: _primaryGreen,
+                            color: const Color(0xFFC427FB),
                           ),
                           child: Icon(
                             _isRunning

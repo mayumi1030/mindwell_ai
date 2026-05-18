@@ -10,12 +10,6 @@ class GroundingScreen extends StatefulWidget {
 class _GroundingScreenState extends State<GroundingScreen> {
   int _currentStep = 0;
 
-  static const Color _background = Color(0xFFF5F4EF);
-  static const Color _primaryGreen = Color(0xFF2D9B6F);
-  static const Color _textDark = Color(0xFF1A1A1A);
-  static const Color _textMuted = Color(0xFF6B6B6B);
-  static const Color _cardBg = Color(0xFFFFFFFF);
-
   final List<Map<String, dynamic>> _steps = [
     {
       'number': '5',
@@ -65,7 +59,7 @@ class _GroundingScreenState extends State<GroundingScreen> {
     final Color stepColor = step['color'];
 
     return Scaffold(
-      backgroundColor: _background,
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: Column(
           children: [
@@ -84,7 +78,7 @@ class _GroundingScreenState extends State<GroundingScreen> {
                       fontFamily: 'Georgia',
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
-                      color: _textDark,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -143,11 +137,11 @@ class _GroundingScreenState extends State<GroundingScreen> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        color: _cardBg,
+                        color: Colors.transparent,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withOpacity(0.25),
                             blurRadius: 10,
                             offset: const Offset(0, 2),
                           ),
@@ -162,7 +156,7 @@ class _GroundingScreenState extends State<GroundingScreen> {
                               fontFamily: 'Georgia',
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
-                              color: _textDark,
+                              color: Colors.white,
                               height: 1.4,
                             ),
                           ),
@@ -172,7 +166,7 @@ class _GroundingScreenState extends State<GroundingScreen> {
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 13,
-                              color: _textMuted,
+                              color: const Color(0xFFB8B0E8),
                               fontStyle: FontStyle.italic,
                               height: 1.5,
                             ),
@@ -199,7 +193,7 @@ class _GroundingScreenState extends State<GroundingScreen> {
                           backgroundColor: stepColor,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                           elevation: 0,
                         ),

@@ -1,6 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
+// Color constants
+const Color _textMuted = Color(0xFF6B6B6B);
+
 class AffirmationsScreen extends StatefulWidget {
   const AffirmationsScreen({super.key});
 
@@ -13,11 +16,6 @@ class _AffirmationsScreenState extends State<AffirmationsScreen>
   late AnimationController _animController;
   late Animation<double> _fadeAnim;
   int _currentIndex = 0;
-
-  static const Color _background = Color(0xFFF5F4EF);
-  static const Color _primaryGreen = Color(0xFF2D9B6F);
-  static const Color _textDark = Color(0xFF1A1A1A);
-  static const Color _textMuted = Color(0xFF6B6B6B);
 
   final List<Map<String, String>> _affirmations = [
     {'text': 'I am worthy of love and happiness.', 'emoji': '💚'},
@@ -67,7 +65,7 @@ class _AffirmationsScreenState extends State<AffirmationsScreen>
     final affirmation = _affirmations[_currentIndex];
 
     return Scaffold(
-      backgroundColor: _background,
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: Column(
           children: [
@@ -86,7 +84,7 @@ class _AffirmationsScreenState extends State<AffirmationsScreen>
                       fontFamily: 'Georgia',
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
-                      color: _textDark,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -111,7 +109,7 @@ class _AffirmationsScreenState extends State<AffirmationsScreen>
                       Container(
                         padding: const EdgeInsets.all(28),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE8F5F0),
+                          color: const Color(0x15FFFFFF),
                           borderRadius: BorderRadius.circular(24),
                         ),
                         child: Text(
@@ -121,7 +119,7 @@ class _AffirmationsScreenState extends State<AffirmationsScreen>
                             fontFamily: 'Georgia',
                             fontSize: 22,
                             fontWeight: FontWeight.w700,
-                            color: _textDark,
+                            color: Colors.white,
                             height: 1.5,
                           ),
                         ),
@@ -142,10 +140,10 @@ class _AffirmationsScreenState extends State<AffirmationsScreen>
                         child: ElevatedButton(
                           onPressed: _nextAffirmation,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: _primaryGreen,
+                            backgroundColor: const Color(0xFF5936B4),
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                             elevation: 0,
                           ),
