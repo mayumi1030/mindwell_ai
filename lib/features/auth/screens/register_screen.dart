@@ -299,9 +299,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Row(
                       children: [
                         Expanded(
-                          child: Divider(
-                            color: Colors.white.withOpacity(0.1),
-                          ),
+                          child: Divider(color: Colors.white.withOpacity(0.1)),
                         ),
                         const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 12),
@@ -315,9 +313,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         Expanded(
-                          child: Divider(
-                            color: Colors.white.withOpacity(0.1),
-                          ),
+                          child: Divider(color: Colors.white.withOpacity(0.1)),
                         ),
                       ],
                     ),
